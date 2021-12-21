@@ -1,6 +1,12 @@
-# easy-RPC 框架
+# easy-RPC Framework 介绍
 
-## easy-RPC是一款低性能的服务框架，主要用于学习造轮子！
+## 为什么要学习造轮子
+
+> 我觉得从个人成长上说，如果一个程序员能清楚的了解RPC框架所具备的要素，掌握RPC框架中涉及的服务注册发现、负载均衡、序列化协议、RPC通信协议、Socket通信、异步调用、熔断降级等技术，可以全方位的提升基本素质。虽然也有相关源码，但是只看源码容易眼高手低，动手写一个才是自己真正掌握这门技术的最优路径。
+
+## easy-RPC 框架是什么？
+
+easy-RPC 是一款低性能的服务框架，主要用于学习造轮子！
 
 学习本项目可以让你从零开始实现一个类似 Dubbo 服务框架 mini 版RPC。
 
@@ -17,6 +23,13 @@
 9. ……等等
 
 有没有一点心动呢？！
+
+## 学习教程（拼命更新中，欢迎催更……）
+
+- [「从零开始造 RPC 轮子系列」01 我为什么要去造一个轮子？](https://mp.weixin.qq.com/s/b_qUjmofSzr70BeMBZNtTg)
+- [「从零开始造 RPC 轮子系列」02 演示轮子，是驴是马拉出来遛遛](https://mp.weixin.qq.com/s/yqCv53O6A7RRH0Hs1lCKuQ)
+- [「从零开始造 RPC 轮子系列」03 完事具备，只差一个环境搭建](https://mp.weixin.qq.com/s/Pnr3JT5FzBU3j5HgouFiiw)
+- [「从零开始造 RPC 轮子系列」03 手绘 4 张图带你入门 RPC 服务框架](https://mp.weixin.qq.com/s?__biz=MzIwODI1OTk1Nw==&mid=2650326772&idx=1&sn=1bb58a7f5258c12d0e66bf6bc227045a&chksm=8f09b8eeb87e31f89891a40e7daa78a380018917ec881b5dfa25b6e144dd59d0944afc0bc00f&token=454027978&lang=zh_CN#rd)
 
 # 快速开始
 
