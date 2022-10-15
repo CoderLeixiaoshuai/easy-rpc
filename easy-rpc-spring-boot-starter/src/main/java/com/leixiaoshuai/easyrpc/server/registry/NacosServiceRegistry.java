@@ -33,8 +33,7 @@ public class NacosServiceRegistry extends DefaultServiceRegistry {
     public void register(ServiceInterfaceInfo serviceInterfaceInfo) throws Exception {
         super.register(serviceInterfaceInfo);
         // 注册当前服务实例
-        String serviceName = serviceInterfaceInfo.getServiceName();
-        naming.registerInstance(serviceName, buildInstance(serviceInterfaceInfo));
+        naming.registerInstance(serviceInterfaceInfo.getServiceName(), buildInstance(serviceInterfaceInfo));
     }
 
     private Instance buildInstance(ServiceInterfaceInfo serviceInterfaceInfo) {
