@@ -11,3 +11,6 @@ target/
 
 ### VS Code ###
 .vscode/
+
+### fleet
+.fleet
