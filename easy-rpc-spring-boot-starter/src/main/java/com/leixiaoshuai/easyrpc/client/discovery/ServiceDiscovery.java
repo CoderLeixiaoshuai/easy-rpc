@@ -1,8 +1,6 @@
 package com.leixiaoshuai.easyrpc.client.discovery;
 
-import com.leixiaoshuai.easyrpc.common.ServiceInfo;
-
-import java.util.List;
+import com.leixiaoshuai.easyrpc.common.ServiceInterfaceInfo;
 
 /**
  * @Description 客户端服务发现
@@ -12,9 +10,10 @@ import java.util.List;
 public interface ServiceDiscovery {
 
     /**
-     * 通过服务名称获取服务提供者暴露的服务列表
+     * 通过服务名称随机选择一个健康的实例
      * @param serviceName 服务名称
-     * @return 服务列表
+     * @return 实例对象
      */
-    List<ServiceInfo> listServices(String serviceName);
+    ServiceInterfaceInfo selectOneInstance(String serviceName);
+
 }

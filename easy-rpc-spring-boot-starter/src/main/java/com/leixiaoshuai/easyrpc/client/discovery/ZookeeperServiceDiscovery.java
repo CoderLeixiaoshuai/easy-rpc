@@ -1,7 +1,7 @@
 package com.leixiaoshuai.easyrpc.client.discovery;
 
 import com.alibaba.fastjson.JSON;
-import com.leixiaoshuai.easyrpc.common.ServiceInfo;
+import com.leixiaoshuai.easyrpc.common.ServiceInterfaceInfo;
 import org.I0Itec.zkclient.ZkClient;
 import org.I0Itec.zkclient.exception.ZkMarshallingError;
 import org.I0Itec.zkclient.serialize.ZkSerializer;
@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * 通过 Zookeeper 实现服务发现
@@ -44,8 +43,8 @@ public class ZookeeperServiceDiscovery implements ServiceDiscovery {
     }
 
     @Override
-    public List<ServiceInfo> listServices(String serviceName) {
-        String servicePath = "/com/leixiaoshuai/easyrpc/" + serviceName + "/service";
+    public ServiceInterfaceInfo selectOneInstance(String serviceName) {
+        String servicePath = "/com/leixiaoshuai/easyrpc/service/" + serviceName;
         final List<String> childrenNodes = zkClient.getChildren(servicePath);
 
         return Optional.ofNullable(childrenNodes)
@@ -55,12 +54,11 @@ public class ZookeeperServiceDiscovery implements ServiceDiscovery {
                     try {
                         // 将服务信息经过 URL 解码后反序列化为对象
                         String serviceInstanceJson = URLDecoder.decode(node, "UTF-8");
-                        return JSON.parseObject(serviceInstanceJson, ServiceInfo.class);
+                        return JSON.parseObject(serviceInstanceJson, ServiceInterfaceInfo.class);
                     } catch (UnsupportedEncodingException e) {
                         logger.error("Fail to decode", e);
                     }
                     return null;
-                }).filter(Objects::nonNull)
-                .collect(Collectors.toList());
+                }).filter(Objects::nonNull).findAny().get();
     }
 }

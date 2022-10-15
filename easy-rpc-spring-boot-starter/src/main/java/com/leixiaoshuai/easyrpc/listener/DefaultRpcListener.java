@@ -1,9 +1,9 @@
 package com.leixiaoshuai.easyrpc.listener;
 
-import com.leixiaoshuai.easyrpc.client.ClientProxyFactory;
 import com.leixiaoshuai.easyrpc.annotation.ServiceExpose;
 import com.leixiaoshuai.easyrpc.annotation.ServiceReference;
-import com.leixiaoshuai.easyrpc.common.ServiceInfo;
+import com.leixiaoshuai.easyrpc.client.ClientProxyFactory;
+import com.leixiaoshuai.easyrpc.common.ServiceInterfaceInfo;
 import com.leixiaoshuai.easyrpc.property.RpcProperties;
 import com.leixiaoshuai.easyrpc.server.network.RpcServer;
 import com.leixiaoshuai.easyrpc.server.registry.ServiceRegistry;
@@ -19,6 +19,8 @@ import java.net.UnknownHostException;
 import java.util.Map;
 
 /**
+ * 定义监听器，用于初始化 RPC 服务端或者客户端
+ *
  * @author 雷小帅（公众号：爱笑的架构师）
  * @since 2021/11/28
  */
@@ -44,51 +46,63 @@ public class DefaultRpcListener implements ApplicationListener<ContextRefreshedE
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         final ApplicationContext applicationContext = event.getApplicationContext();
-        // 如果是root application context就开始执行
+        // 如果是 root application context就开始执行
         if (applicationContext.getParent() == null) {
-            // 启动 rpc 服务端
-            startRpcServer(applicationContext);
-
-            // 注入依赖的远端rpc服务
-            injectDependencyService(applicationContext);
+            // 初始化 rpc 服务端
+            initRpcServer(applicationContext);
+            // 初始化 rpc 客户端
+            initRpcClient(applicationContext);
         }
     }
 
-    private void startRpcServer(ApplicationContext applicationContext) {
+    private void initRpcServer(ApplicationContext applicationContext) {
+        // 1.1 扫描服务端@ServiceExpose注解，并将服务接口信息注册到注册中心
         final Map<String, Object> beans = applicationContext.getBeansWithAnnotation(ServiceExpose.class);
         if (beans.size() == 0) {
+            // 没发现注解
             return;
         }
 
-        for (Object obj : beans.values()) {
-            final Class<?> clazz = obj.getClass();
-            final Class<?>[] interfaces = clazz.getInterfaces();
-            // 这里假设只实现了一个接口
-            final Class<?> interfaceClazz = interfaces[0];
-
-            final String name = interfaceClazz.getName();
-            String ip = "127.0.0.1";
-            try {
-                ip = InetAddress.getLocalHost().getHostAddress();
-            } catch (UnknownHostException e) {
-
-            }
-            final Integer port = rpcProperties.getExposePort();
-            final ServiceInfo serviceInfo = new ServiceInfo(name, ip, port, interfaceClazz, obj);
-
-            try {
-                // 注册服务
-                serviceRegistry.register(serviceInfo);
-            } catch (Exception e) {
-                logger.error("Fail to register service: {}", e.getMessage());
-            }
+        for (Object beanObj : beans.values()) {
+            // 注册服务实例接口信息
+            registerInstanceInterfaceInfo(beanObj);
         }
 
-        // 启动 rpc 服务器，开始监听端口
+        // 1.2 启动网络通信服务器，开始监听指定端口
         rpcServer.start();
     }
 
-    private void injectDependencyService(ApplicationContext applicationContext) {
+    private void registerInstanceInterfaceInfo(Object beanObj) {
+        final Class<?>[] interfaces = beanObj.getClass().getInterfaces();
+        if (interfaces.length <= 0) {
+            // 注解类未实现接口
+            return;
+        }
+
+        // 暂时只考虑实现了一个接口的场景
+        Class<?> interfaceClazz = interfaces[0];
+        String serviceName = interfaceClazz.getName();
+        String ip = getLocalAddress();
+        Integer port = rpcProperties.getExposePort();
+
+        try {
+            // 注册服务
+            serviceRegistry.register(new ServiceInterfaceInfo(serviceName, ip, port, interfaceClazz, beanObj));
+        } catch (Exception e) {
+            logger.error("Fail to register service: {}", e.getMessage());
+        }
+    }
+
+    private String getLocalAddress() {
+        String ip = "127.0.0.1";
+        try {
+            ip = InetAddress.getLocalHost().getHostAddress();
+        } catch (UnknownHostException e) {
+        }
+        return ip;
+    }
+
+    private void initRpcClient(ApplicationContext applicationContext) {
         // 遍历容器中所有的 bean
         String[] beanNames = applicationContext.getBeanDefinitionNames();
         for (String beanName : beanNames) {

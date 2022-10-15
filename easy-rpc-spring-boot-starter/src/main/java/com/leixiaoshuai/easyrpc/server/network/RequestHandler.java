@@ -1,11 +1,10 @@
 package com.leixiaoshuai.easyrpc.server.network;
 
-import com.leixiaoshuai.easyrpc.common.ServiceInfo;
+import com.leixiaoshuai.easyrpc.common.ServiceInterfaceInfo;
 import com.leixiaoshuai.easyrpc.serialization.MessageProtocol;
 import com.leixiaoshuai.easyrpc.serialization.RpcRequest;
 import com.leixiaoshuai.easyrpc.serialization.RpcResponse;
 import com.leixiaoshuai.easyrpc.server.registry.ServiceRegistry;
-import com.leixiaoshuai.easyrpc.server.registry.ZookeeperServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +16,7 @@ import java.lang.reflect.Method;
  * @since 2021/11/25
  */
 public class RequestHandler {
-    private static final Logger logger = LoggerFactory.getLogger(ZookeeperServiceRegistry.class);
+    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     private final MessageProtocol protocol;
 
@@ -30,19 +29,20 @@ public class RequestHandler {
 
     public byte[] handleRequest(byte[] data) throws Exception {
         // 请求消息解码
-        final RpcRequest rpcRequest = protocol.unmarshallingReqMessage(data);
-        final String serviceName = rpcRequest.getServiceName();
-        final ServiceInfo serviceInfo = serviceRegistry.getServiceInstance(serviceName);
+        RpcRequest rpcRequest = protocol.unmarshallingReqMessage(data);
+        String serviceName = rpcRequest.getServiceName();
+        ServiceInterfaceInfo serviceInterfaceInfo = serviceRegistry.getRegisteredObj(serviceName);
+
         RpcResponse response = new RpcResponse();
-        if (serviceInfo == null) {
+        if (serviceInterfaceInfo == null) {
             response.setStatus("Not Found");
             return protocol.marshallingRespMessage(response);
         }
 
         // 通过反射技术调用目标方法
         try {
-            final Method method = serviceInfo.getClazz().getMethod(rpcRequest.getMethod(), rpcRequest.getParameterTypes());
-            final Object retValue = method.invoke(serviceInfo.getObj(), rpcRequest.getParameters());
+            final Method method = serviceInterfaceInfo.getClazz().getMethod(rpcRequest.getMethodName(), rpcRequest.getParameterTypes());
+            final Object retValue = method.invoke(serviceInterfaceInfo.getObj(), rpcRequest.getParameters());
             response.setStatus("Success");
             response.setRetValue(retValue);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {

@@ -1,6 +1,6 @@
 package com.leixiaoshuai.easyrpc.client.network;
 
-import com.leixiaoshuai.easyrpc.common.ServiceInfo;
+import com.leixiaoshuai.easyrpc.common.ServiceInterfaceInfo;
 
 /**
  * @Description 网络客户端：client侧
@@ -11,8 +11,8 @@ public interface RpcClient {
     /**
      *
      * @param data 待发送的消息
-     * @param serviceInfo 消息接收者
+     * @param serviceInterfaceInfo 消息接收者
      * @return 已发送消息
      */
-    byte[] sendMessage(byte[] data, ServiceInfo serviceInfo) throws InterruptedException;
+    byte[] sendMessage(byte[] data, ServiceInterfaceInfo serviceInterfaceInfo) throws InterruptedException;
 }

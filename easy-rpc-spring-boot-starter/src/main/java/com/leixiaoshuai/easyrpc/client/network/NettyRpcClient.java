@@ -1,6 +1,6 @@
 package com.leixiaoshuai.easyrpc.client.network;
 
-import com.leixiaoshuai.easyrpc.common.ServiceInfo;
+import com.leixiaoshuai.easyrpc.common.ServiceInterfaceInfo;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -16,9 +16,9 @@ import io.netty.channel.socket.nio.NioSocketChannel;
  */
 public class NettyRpcClient implements RpcClient {
     @Override
-    public byte[] sendMessage(byte[] data, ServiceInfo serviceInfo) throws InterruptedException {
-        final String ip = serviceInfo.getIp();
-        final Integer port = serviceInfo.getPort();
+    public byte[] sendMessage(byte[] data, ServiceInterfaceInfo serviceInterfaceInfo) throws InterruptedException {
+        final String ip = serviceInterfaceInfo.getIp();
+        final Integer port = serviceInterfaceInfo.getPort();
 
         ClientChannelHandler clientChannelHandler = new ClientChannelHandler(data);
         // 初始化 netty 客户端

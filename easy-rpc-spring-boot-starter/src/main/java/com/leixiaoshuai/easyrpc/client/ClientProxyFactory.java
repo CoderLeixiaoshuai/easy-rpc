@@ -1,20 +1,18 @@
 package com.leixiaoshuai.easyrpc.client;
 
 import com.leixiaoshuai.easyrpc.client.discovery.ServiceDiscovery;
-import com.leixiaoshuai.easyrpc.common.ServiceInfo;
 import com.leixiaoshuai.easyrpc.client.network.RpcClient;
+import com.leixiaoshuai.easyrpc.common.ServiceInterfaceInfo;
 import com.leixiaoshuai.easyrpc.exception.RpcException;
 import com.leixiaoshuai.easyrpc.serialization.MessageProtocol;
 import com.leixiaoshuai.easyrpc.serialization.RpcRequest;
 import com.leixiaoshuai.easyrpc.serialization.RpcResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -56,19 +54,16 @@ public class ClientProxyFactory {
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 // 第一步：通过服务发现机制选择一个服务提供者暴露的服务
                 String serviceName = clazz.getName();
-                final List<ServiceInfo> serviceInfos = serviceDiscovery.listServices(serviceName);
-                logger.info("Rpc server instance list: {}", serviceInfos);
-                if (CollectionUtils.isEmpty(serviceInfos)) {
+                ServiceInterfaceInfo serviceInterfaceInfo = serviceDiscovery.selectOneInstance(serviceName);
+                logger.info("Rpc server instance list: {}", serviceInterfaceInfo);
+                if (serviceInterfaceInfo == null) {
                     throw new RpcException("No rpc servers found.");
                 }
-
-                // TODO: 这里模拟负载均衡，从多个服务提供者暴露的服务中随机挑选一个
-                final ServiceInfo serviceInfo = serviceInfos.get(random.nextInt(serviceInfos.size()));
 
                 // 第二步：构造 rpc 请求对象
                 final RpcRequest rpcRequest = new RpcRequest();
                 rpcRequest.setServiceName(serviceName);
-                rpcRequest.setMethod(method.getName());
+                rpcRequest.setMethodName(method.getName());
                 rpcRequest.setParameterTypes(method.getParameterTypes());
                 rpcRequest.setParameters(args);
 
@@ -76,7 +71,7 @@ public class ClientProxyFactory {
                 byte[] data = messageProtocol.marshallingReqMessage(rpcRequest);
 
                 // 第四步：调用 rpc client 开始发送消息
-                byte[] byteResponse = rpcClient.sendMessage(data, serviceInfo);
+                byte[] byteResponse = rpcClient.sendMessage(data, serviceInterfaceInfo);
 
                 // 第五步：解码响应消息
                 final RpcResponse rpcResponse = messageProtocol.unmarshallingRespMessage(byteResponse);

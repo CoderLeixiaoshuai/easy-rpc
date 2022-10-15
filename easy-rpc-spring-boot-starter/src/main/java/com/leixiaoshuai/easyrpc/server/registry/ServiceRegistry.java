@@ -1,6 +1,6 @@
 package com.leixiaoshuai.easyrpc.server.registry;
 
-import com.leixiaoshuai.easyrpc.common.ServiceInfo;
+import com.leixiaoshuai.easyrpc.common.ServiceInterfaceInfo;
 
 /**
  * 服务注册
@@ -12,17 +12,18 @@ public interface ServiceRegistry {
     /**
      * 注册服务信息
      *
-     * @param serviceInfo 待注册的服务
+     * @param serviceInterfaceInfo 待注册的服务
      * @throws Exception 异常
      */
-    void register(ServiceInfo serviceInfo) throws Exception;
+    void register(ServiceInterfaceInfo serviceInterfaceInfo) throws Exception;
 
     /**
-     * 根据服务名称获取服务信息
+     * 根据服务名称和接口名称获取已注册的对象
      *
-     * @param name 服务名称
-     * @return 服务信息
+     * @param serviceName 服务名
+     * @return 已注册的对象
      * @throws Exception 异常
      */
-    ServiceInfo getServiceInstance(String name) throws Exception;
+    ServiceInterfaceInfo getRegisteredObj(String serviceName) throws Exception;
+
 }

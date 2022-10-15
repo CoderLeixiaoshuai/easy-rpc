@@ -14,13 +14,18 @@ import org.slf4j.LoggerFactory;
  * @author 雷小帅（公众号：爱笑的架构师）
  * @since 2021/11/26
  */
-public class NettyRpcServer extends RpcServer {
+public class NettyRpcServer implements RpcServer {
     private static final Logger logger = LoggerFactory.getLogger(NettyRpcServer.class);
+
+    private int port;
+
+    private RequestHandler requestHandler;
 
     private Channel channel;
 
-    public NettyRpcServer(int port, String protocol, RequestHandler requestHandler) {
-        super(port, protocol, requestHandler);
+    public NettyRpcServer(int port, RequestHandler requestHandler) {
+        this.port = port;
+        this.requestHandler = requestHandler;
     }
 
     @Override
@@ -80,6 +85,7 @@ public class NettyRpcServer extends RpcServer {
             final ByteBuf msgBuf = (ByteBuf) msg;
             final byte[] reqBytes = new byte[msgBuf.readableBytes()];
             msgBuf.readBytes(reqBytes);
+            // 调用请求处理器开始处理客户端请求
             final byte[] respBytes = requestHandler.handleRequest(reqBytes);
             logger.info("Send response massage: {}", respBytes);
             final ByteBuf resBuf = Unpooled.buffer(respBytes.length);

@@ -11,11 +11,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "leixiaoshuai.easy.rpc")
 @Data
 public class RpcProperties {
-    private String applicationName = "rpc-server";
-
     private Integer exposePort = 6666;
 
-    private String zkAddress = "127.0.0.1:2181";
+    private String register;
+
+    private String registerAddress;
 
     private String protocol = "java";
+
 }

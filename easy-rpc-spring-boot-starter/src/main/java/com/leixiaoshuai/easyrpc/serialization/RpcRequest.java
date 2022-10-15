@@ -1,6 +1,7 @@
 package com.leixiaoshuai.easyrpc.serialization;
 
 import lombok.Data;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -11,9 +12,10 @@ import java.util.Map;
  * @since 2021/11/26
  */
 @Data
+@ToString
 public class RpcRequest implements Serializable {
     private String serviceName;
-    private String method;
+    private String methodName;
     private Map<String, String> headers = new HashMap<>();
     private Class<?>[] parameterTypes;
     private Object[] parameters;
