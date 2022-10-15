@@ -12,7 +12,7 @@ public interface ServiceRegistry {
     /**
      * 注册服务信息
      *
-     * @param serviceInterfaceInfo 待注册的服务
+     * @param serviceInterfaceInfo 待注册的服务(接口)信息
      * @throws Exception 异常
      */
     void register(ServiceInterfaceInfo serviceInterfaceInfo) throws Exception;
