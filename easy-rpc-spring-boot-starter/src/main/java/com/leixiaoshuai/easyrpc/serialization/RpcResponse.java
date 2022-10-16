@@ -12,8 +12,11 @@ import java.util.Map;
  */
 @Data
 public class RpcResponse implements Serializable {
+    // 调用成功或失败
     private String status;
-    private Map<String, String> headers = new HashMap<>();
+    // 返回值对象
     private Object retValue;
+    private Map<String, String> headers = new HashMap<>();
+    // 如果失败，返回异常对象
     private Exception exception;
 }

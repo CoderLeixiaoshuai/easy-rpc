@@ -13,11 +13,6 @@ import java.io.ObjectOutputStream;
  */
 public class DefaultMessageProtocol implements MessageProtocol {
     @Override
-    public byte[] marshallingReqMessage(RpcRequest request) throws Exception {
-        return serialize(request);
-    }
-
-    @Override
     public RpcRequest unmarshallingReqMessage(byte[] data) throws Exception {
         ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(data));
         return (RpcRequest) in.readObject();
@@ -32,6 +27,11 @@ public class DefaultMessageProtocol implements MessageProtocol {
     public RpcResponse unmarshallingRespMessage(byte[] data) throws Exception {
         ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(data));
         return (RpcResponse) in.readObject();
+    }
+
+    @Override
+    public byte[] marshallingReqMessage(RpcRequest request) throws Exception {
+        return serialize(request);
     }
 
     private byte[] serialize(Object obj) throws Exception {

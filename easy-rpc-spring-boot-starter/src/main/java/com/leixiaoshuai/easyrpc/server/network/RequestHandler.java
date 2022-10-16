@@ -5,8 +5,7 @@ import com.leixiaoshuai.easyrpc.serialization.MessageProtocol;
 import com.leixiaoshuai.easyrpc.serialization.RpcRequest;
 import com.leixiaoshuai.easyrpc.serialization.RpcResponse;
 import com.leixiaoshuai.easyrpc.server.registry.ServiceRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -15,9 +14,8 @@ import java.lang.reflect.Method;
  * @author 雷小帅（公众号：爱笑的架构师）
  * @since 2021/11/25
  */
+@Slf4j
 public class RequestHandler {
-    private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-
     private final MessageProtocol protocol;
 
     private final ServiceRegistry serviceRegistry;
@@ -39,8 +37,8 @@ public class RequestHandler {
             return protocol.marshallingRespMessage(response);
         }
 
-        // 通过反射技术调用目标方法
         try {
+            // 通过反射技术调用目标方法
             final Method method = serviceInterfaceInfo.getClazz().getMethod(rpcRequest.getMethodName(), rpcRequest.getParameterTypes());
             final Object retValue = method.invoke(serviceInterfaceInfo.getObj(), rpcRequest.getParameters());
             response.setStatus("Success");
