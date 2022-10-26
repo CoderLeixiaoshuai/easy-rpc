@@ -48,8 +48,6 @@ public class ClientProxyFactory {
     @SuppressWarnings("unchecked")
     public <T> T getProxyInstance(Class<T> clazz) {
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class[]{clazz}, new InvocationHandler() {
-            final Random random = new Random();
-
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 // 第一步：通过服务发现机制选择一个服务提供者暴露的服务

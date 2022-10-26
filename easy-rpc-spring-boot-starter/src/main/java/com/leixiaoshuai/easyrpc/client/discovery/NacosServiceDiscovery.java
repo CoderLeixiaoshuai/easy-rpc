@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
  */
 @Slf4j
 public class NacosServiceDiscovery implements ServiceDiscovery {
-    private static final Logger logger = LoggerFactory.getLogger(NacosServiceRegistry.class);
     private NamingService namingService;
 
     public NacosServiceDiscovery(String serverList) {
@@ -27,7 +26,7 @@ public class NacosServiceDiscovery implements ServiceDiscovery {
             log.error("Nacos client init error", e);
         }
         // 打印 Nacos Server 的运行状态
-        logger.info("Nacos server status: {}", namingService.getServerStatus());
+        log.info("Nacos server status: {}", namingService.getServerStatus());
     }
 
     @Override
@@ -37,7 +36,7 @@ public class NacosServiceDiscovery implements ServiceDiscovery {
             // 调用 nacos 提供的接口，随机挑选一个服务实例，负载均衡的算法依赖 nacos 的实现
             instance = namingService.selectOneHealthyInstance(serviceName);
         } catch (NacosException e) {
-            logger.error("Nacos exception", e);
+            log.error("Nacos exception", e);
             return null;
         }
 
@@ -48,6 +47,5 @@ public class NacosServiceDiscovery implements ServiceDiscovery {
         serviceInterfaceInfo.setPort(instance.getPort());
         return serviceInterfaceInfo;
     }
-
 
 }

@@ -8,6 +8,7 @@ package com.leixiaoshuai.easyrpc.serialization;
  */
 public interface MessageProtocol {
     // 服务端
+
     /**
      * 解码请求消息
      *
@@ -31,18 +32,18 @@ public interface MessageProtocol {
     /**
      * 编码请求消息
      *
-     * @param request the request
-     * @return the byte [ ]
-     * @throws Exception the exception
+     * @param request 客户端请求对象
+     * @return 对象编码后的字节数组
+     * @throws Exception 异常
      */
     byte[] marshallingReqMessage(RpcRequest request) throws Exception;
 
     /**
      * 解码响应消息
      *
-     * @param data the data
-     * @return the rpc response
-     * @throws Exception the exception
+     * @param data 服务端响应待解码字节数组
+     * @return 服务端响应的对象
+     * @throws Exception 异常
      */
     RpcResponse unmarshallingRespMessage(byte[] data) throws Exception;
 }

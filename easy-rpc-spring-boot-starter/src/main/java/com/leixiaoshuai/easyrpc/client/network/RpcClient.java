@@ -9,6 +9,7 @@ import com.leixiaoshuai.easyrpc.common.ServiceInterfaceInfo;
  */
 public interface RpcClient {
     /**
+     * 发送消息
      *
      * @param data 待发送的消息
      * @param serviceInterfaceInfo 消息接收者

@@ -123,9 +123,9 @@ public class DefaultRpcListener implements ApplicationListener<ContextRefreshedE
                 // 终于找到被注解标记的成员属性了
                 Object beanObject = applicationContext.getBean(beanName);
                 Class<?> fieldClass = field.getType();
-                field.setAccessible(true);
                 try {
                     // 注入代理对象值
+                    field.setAccessible(true);
                     field.set(beanObject, clientProxyFactory.getProxyInstance(fieldClass));
                 } catch (IllegalAccessException e) {
                     logger.error("Fail to inject service, bean.name: {}, error.msg: {}", beanName, e.getMessage());

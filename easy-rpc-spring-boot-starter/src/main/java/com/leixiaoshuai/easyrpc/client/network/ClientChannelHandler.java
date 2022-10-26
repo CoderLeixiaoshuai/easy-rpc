@@ -61,7 +61,6 @@ public class ClientChannelHandler extends ChannelInboundHandlerAdapter {
         try {
             countDownLatch.await();
         } catch (InterruptedException e) {
-
         }
         return response;
     }
